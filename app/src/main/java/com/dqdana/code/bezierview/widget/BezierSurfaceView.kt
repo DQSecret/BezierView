@@ -1,12 +1,10 @@
 package com.dqdana.code.bezierview.widget
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import android.view.animation.LinearInterpolator
 
 class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs),
         SurfaceHolder.Callback,
@@ -22,8 +20,8 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
     private var mPaint: Paint = Paint().apply {
         color = Color.LTGRAY
         style = Paint.Style.STROKE
-        isAntiAlias = true
-        isDither = true
+        isAntiAlias = true // 锯齿
+        // isDither = true // 抖动
     }
 
     private var mOffsetX = 0
@@ -39,8 +37,6 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
         }
     }
 
-    private var animator: ValueAnimator? = null
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         mCenterY = height / 2
@@ -52,6 +48,10 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
         this.isFocusable = true
         this.isFocusableInTouchMode = true
         this.keepScreenOn = true
+
+        // 去除黑底
+        setZOrderOnTop(true)
+        holder.setFormat(PixelFormat.TRANSLUCENT)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder?) {
@@ -74,10 +74,9 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
     private fun draw() {
         try {
             mCanvas = mHolder?.lockCanvas()
-            //draw something
+            // 绘制
             mCanvas?.let {
-                //                start(it)
-                drawPre(it)
+                start(it)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -88,45 +87,49 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
         }
     }
 
+    /**
+     * 这里用来控制循环长度(时间)or速度
+     */
     private fun start(canvas: Canvas) {
-        animator = ValueAnimator.ofInt(0, width * 2).apply {
-            duration = 6 * 1000
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
-            addUpdateListener {
-                mOffsetX = it.animatedValue as Int
-                drawPre(canvas)
-            }
-            start()
+        val max = width * 2 // 一整段循环结束后,会顿一下;所以弄长一点,不容易被发现O(∩_∩)O哈！
+        val unit = max / 200
+        if (mOffsetX < max) {
+            mOffsetX += unit
+        } else {
+            mOffsetX = 0
         }
+        drawPre(canvas)
     }
 
     private fun drawPre(canvas: Canvas) {
+        // 清屏
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        // 绘制
         drawPath(
                 canvas,
                 randomOffsetX = randomXArr[0],
                 direction = -1, level = 4, segment = 4, lineWidth = 1f
         )
-//        drawPath(
-//                canvas,
-//                randomOffsetX = randomXArr[1],
-//                direction = -1, level = 2, segment = 3, lineWidth = 2f
-//        )
-//        drawPath(
-//                canvas,
-//                randomOffsetX = randomXArr[2],
-//                direction = -1, level = 1, segment = 2, lineWidth = 2f
-//        )
-//        drawPath(
-//                canvas,
-//                randomOffsetX = randomXArr[3],
-//                direction = 1, level = 3, segment = 3, lineWidth = 1f
-//        )
-//        drawPath(
-//                canvas,
-//                randomOffsetX = randomXArr[4],
-//                direction = 1, level = 2, segment = 2, lineWidth = 2f
-//        )
+        drawPath(
+                canvas,
+                randomOffsetX = randomXArr[1],
+                direction = -1, level = 2, segment = 3, lineWidth = 2f
+        )
+        drawPath(
+                canvas,
+                randomOffsetX = randomXArr[2],
+                direction = -1, level = 1, segment = 2, lineWidth = 2f
+        )
+        drawPath(
+                canvas,
+                randomOffsetX = randomXArr[3],
+                direction = 1, level = 3, segment = 3, lineWidth = 1f
+        )
+        drawPath(
+                canvas,
+                randomOffsetX = randomXArr[4],
+                direction = 1, level = 2, segment = 2, lineWidth = 2f
+        )
     }
 
     private fun drawPath(
@@ -157,47 +160,82 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
 
         // 改变偏移量
         val offset = random % mSegmentsWidth
-        // 最前面单独的线, 没有规律, 单独绘制
-        prefix(canvas, offset, mSegmentsWidth, mSegmentsHeight, dir, path)
-        // 有规律的线, 需要不停的变换方向
-        repeat(canvas, offset, mSegmentsCount, mSegmentsWidth, mSegmentsHeight, dir, path)
+        // 分段绘制
+        when (mSegmentsCount) {
+            1 -> {
+            }
+            2 -> {
+            }
+            3 -> {
+            }
+            4 -> {
+            }
+            5 -> {
+            }
+        }
+
+        prefix(canvas,
+                0,
+                offset,
+                offset,
+                mSegmentsWidth, mSegmentsHeight, dir, path)
+        dir *= -1 // 每绘制完一小段,改变一次方向
+
+
+        prefix(canvas,
+                offset,
+
+                (mSegmentsWidth * 1 + offset * 0.5).toInt(),
+
+                offset + mSegmentsWidth * 1,
+                mSegmentsWidth, mSegmentsHeight, dir, path)
+
+        dir *= -1
+        prefix(canvas,
+                offset + mSegmentsWidth * 1,
+
+                (mSegmentsWidth * 1.5 + offset * 0.25).toInt(),
+
+                offset + mSegmentsWidth * 2,
+                mSegmentsWidth, mSegmentsHeight, dir, path)
+
+        dir *= -1
+        prefix(canvas,
+                offset + mSegmentsWidth * 2,
+
+                (mSegmentsWidth * 1.75 - offset * 0.5).toInt(),
+
+                offset + mSegmentsWidth * 3,
+                mSegmentsWidth, mSegmentsHeight, dir, path)
+
+        dir *= -1
+        prefix(canvas,
+                offset + mSegmentsWidth * 3,
+
+                (mSegmentsWidth * 1.25 - offset * 0.5).toInt(),
+
+                offset + mSegmentsWidth * 4,
+                mSegmentsWidth, mSegmentsHeight, dir, path)
     }
 
     /**
      * 第一段, 需要动态绘制, 是没有规律的, 所以单独分开
      * 参数分别为, 画布, 小段宽度, 小段高度, 方向, 画笔路径
      */
-    private fun prefix(canvas: Canvas, offset: Int, width: Int, height: Int, direction: Int, path: Path) {
+    private fun prefix(canvas: Canvas,
+                       start: Int, offset: Int, end: Int,
+                       width: Int, height: Int, direction: Int, path: Path) {
         // 设置起点
-        val p1 = Point(0, mCenterY)
-        // 设置高度, 辅助点位置
+        val p1 = Point(start, mCenterY)
+        // 设置高度, 辅助点位置, 根据宽度的比例, 计算高度
         val pHeight = ((offset.toDouble() / width) * height).toInt()
-        val p2 = Point(offset / 2, mCenterY + pHeight * direction)
+        val p2 = Point(start + (end - start) / 2, mCenterY + pHeight * direction)
         // 设置终点位置
-        val p3 = Point(offset, mCenterY)
+        val p3 = Point(end, mCenterY)
         // 设置 path
         path.moveTo(p1.x.toFloat(), p1.y.toFloat())
         path.quadTo(p2.x.toFloat(), p2.y.toFloat(), p3.x.toFloat(), p3.y.toFloat())
         // 画线
         canvas.drawPath(path, mPaint)
     }
-
-    private fun repeat(canvas: Canvas, offset: Int, count: Int, width: Int, height: Int, direction: Int, path: Path) {
-        var dir = direction
-        for (index in 0 until count) {
-            // 设置起点
-            val p1 = Point(offset + width * index, mCenterY)
-            // 设置高度, 辅助点位置
-            dir *= -1
-            val p2 = Point(p1.x + width / 2, mCenterY + height * dir)
-            // 设置终点位置
-            val p3 = Point(p1.x + width, mCenterY)
-            // 设置 path
-            path.moveTo(p1.x.toFloat(), p1.y.toFloat())
-            path.quadTo(p2.x.toFloat(), p2.y.toFloat(), p3.x.toFloat(), p3.y.toFloat())
-            // 画线
-            canvas.drawPath(path, mPaint)
-        }
-    }
-
 }

@@ -9,20 +9,30 @@
     <com.dqdana.code.bezierview.widget.Bezier
         android:id="@+id/bezier"
         android:layout_width="300dp"
-        android:layout_height="100dp"
+        android:layout_height="180dp"
         android:background="@android:color/holo_blue_dark"
-        app:layout_constraintBottom_toTopOf="@id/bezier_surface"
+        app:layout_constraintBottom_toTopOf="@id/bezier_curve_cubic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.dqdana.code.bezierview.widget.BezierSurfaceView
-        android:id="@+id/bezier_surface"
+    <com.dqdana.code.bezierview.widget.QuadraticBezierShowView
+        android:id="@+id/bezier_curve_cubic"
         android:layout_width="300dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toTopOf="@id/bezier_surface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bezier"
+        tools:background="@android:color/holo_orange_dark" />
+
+    <com.dqdana.code.bezierview.widget.BezierSurfaceView
+        android:id="@+id/bezier_surface"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bezier_curve_cubic"
         tools:background="@android:color/holo_purple" />
 </android.support.constraint.ConstraintLayout>
