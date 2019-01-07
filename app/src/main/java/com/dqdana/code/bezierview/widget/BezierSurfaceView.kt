@@ -21,7 +21,7 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
         color = Color.LTGRAY
         style = Paint.Style.STROKE
         isAntiAlias = true // 锯齿
-        // isDither = true // 抖动
+        isDither = true // 抖动
     }
 
     private var mOffsetX = 0
@@ -92,7 +92,7 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
      */
     private fun start(canvas: Canvas) {
         val max = width * 2 // 一整段循环结束后,会顿一下;所以弄长一点,不容易被发现O(∩_∩)O哈！
-        val unit = max / 200
+        val unit = max / 150
         if (mOffsetX < max) {
             mOffsetX += unit
         } else {
@@ -161,59 +161,33 @@ class BezierSurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(c
         // 改变偏移量
         val offset = random % mSegmentsWidth
         // 分段绘制
-        when (mSegmentsCount) {
-            1 -> {
-            }
-            2 -> {
-            }
-            3 -> {
-            }
-            4 -> {
-            }
-            5 -> {
-            }
-        }
-
         prefix(canvas,
                 0,
                 offset,
                 offset,
                 mSegmentsWidth, mSegmentsHeight, dir, path)
         dir *= -1 // 每绘制完一小段,改变一次方向
-
-
         prefix(canvas,
                 offset,
-
-                (mSegmentsWidth * 1 + offset * 0.5).toInt(),
-
+                (mSegmentsWidth * 1 + offset * 0.3).toInt(),
                 offset + mSegmentsWidth * 1,
                 mSegmentsWidth, mSegmentsHeight, dir, path)
-
         dir *= -1
         prefix(canvas,
                 offset + mSegmentsWidth * 1,
-
-                (mSegmentsWidth * 1.5 + offset * 0.25).toInt(),
-
+                (mSegmentsWidth * 1.3 + offset * 0.25).toInt(),
                 offset + mSegmentsWidth * 2,
                 mSegmentsWidth, mSegmentsHeight, dir, path)
-
         dir *= -1
         prefix(canvas,
                 offset + mSegmentsWidth * 2,
-
-                (mSegmentsWidth * 1.75 - offset * 0.5).toInt(),
-
+                (mSegmentsWidth * 1.55 - offset * 0.4).toInt(),
                 offset + mSegmentsWidth * 3,
                 mSegmentsWidth, mSegmentsHeight, dir, path)
-
         dir *= -1
         prefix(canvas,
                 offset + mSegmentsWidth * 3,
-
-                (mSegmentsWidth * 1.25 - offset * 0.5).toInt(),
-
+                (mSegmentsWidth * 1.15 - offset * 0.5).toInt(),
                 offset + mSegmentsWidth * 4,
                 mSegmentsWidth, mSegmentsHeight, dir, path)
     }
