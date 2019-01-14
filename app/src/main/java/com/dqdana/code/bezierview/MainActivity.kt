@@ -12,5 +12,8 @@ class MainActivity : AppCompatActivity() {
         bezier.setOnClickListener {
             bezier.toggle()
         }
+        bezier_surface.setOnClickListener {
+            bezier_surface.toggle()
+        }
     }
 }

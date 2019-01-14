@@ -43,39 +43,39 @@ class Bezier(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val segment = 4 // 1, 2, 4 段数, 段数越多, 长度越少
         val lineWidth = 1f // 1f..2f 虚线的宽度,及间隔
         drawPath(
-                canvas,
-                randomOffsetX = randomXArr[0],
-                direction = -1, level = 4, segment = 4, lineWidth = 1f
+            canvas,
+            randomOffsetX = randomXArr[0],
+            direction = -1, level = 4, segment = 4, lineWidth = 1f
         )
         drawPath(
-                canvas,
-                randomOffsetX = randomXArr[1],
-                direction = -1, level = 2, segment = 3, lineWidth = 2f
+            canvas,
+            randomOffsetX = randomXArr[1],
+            direction = -1, level = 2, segment = 3, lineWidth = 2f
         )
         drawPath(
-                canvas,
-                randomOffsetX = randomXArr[2],
-                direction = -1, level = 1, segment = 2, lineWidth = 2f
+            canvas,
+            randomOffsetX = randomXArr[2],
+            direction = -1, level = 1, segment = 2, lineWidth = 2f
         )
         drawPath(
-                canvas,
-                randomOffsetX = randomXArr[3],
-                direction = 1, level = 3, segment = 3, lineWidth = 1f
+            canvas,
+            randomOffsetX = randomXArr[3],
+            direction = 1, level = 3, segment = 3, lineWidth = 1f
         )
         drawPath(
-                canvas,
-                randomOffsetX = randomXArr[4],
-                direction = 1, level = 2, segment = 2, lineWidth = 2f
+            canvas,
+            randomOffsetX = randomXArr[4],
+            direction = 1, level = 2, segment = 2, lineWidth = 2f
         )
     }
 
     private fun drawPath(
-            canvas: Canvas,
-            randomOffsetX: Int,
-            direction: Int,
-            level: Int,
-            segment: Int,
-            lineWidth: Float
+        canvas: Canvas,
+        randomOffsetX: Int,
+        direction: Int,
+        level: Int,
+        segment: Int,
+        lineWidth: Float
     ) {
         // 重置
         val path = Path().apply { reset() }
